@@ -3,6 +3,7 @@
   "short_name": "Hearth Witch",
   "description": "A kitchen spell companion for the urban witch — ingredients, correspondences, and personalised kitchen magick.",
   "start_url": "/Lennox/",
+  "scope": "/Lennox/"
   "display": "standalone",
   "background_color": "#1C1A17",
   "theme_color": "#C17D3C",

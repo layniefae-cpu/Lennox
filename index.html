@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>The Hearth Witch Kitchen</title>
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#C17D3C">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Hearth Witch">
+  <link rel="apple-touch-icon" href="icon-192.png">
+  <meta name="mobile-web-app-capable" content="yes">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@400&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --iron: #1C1A17;
+    --deep: #252018;
+    --linen: #F0E6D3;
+    --linen-dim: #C4B49A;
+    --amber: #C17D3C;
+    --amber-light: #E09A50;
+    --herb: #4A6741;
+    --herb-light: #6A8F5E;
+    --ember: #8B3A2A;
+    --gold: #D4A843;
+    --panel: #2A2620;
+    --panel-light: #332F28;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--iron);
+    color: var(--linen);
+    font-family: 'EB Garamond', Georgia, serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 0 60px;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* Ambient fire glow */
+  body::before {
+    content: '';
+    position: fixed;
+    bottom: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 600px;
+    height: 400px;
+    background: radial-gradient(ellipse, rgba(193,125,60,0.12) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .app {
+    width: 100%;
+    max-width: 480px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    text-align: center;
+    padding: 32px 24px 24px;
+    position: relative;
+  }
+
+  .flame-container {
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+  }
+
+  .flame {
+    font-size: 48px;
+    animation: flicker 3s ease-in-out infinite;
+    filter: drop-shadow(0 0 12px rgba(193,125,60,0.6));
+    transition: filter 0.8s ease;
+  }
+
+  @keyframes flicker {
+    0%, 100% { transform: scaleY(1) scaleX(1); opacity: 1; }
+    25% { transform: scaleY(1.04) scaleX(0.97); opacity: 0.95; }
+    50% { transform: scaleY(0.97) scaleX(1.02); opacity: 1; }
+    75% { transform: scaleY(1.02) scaleX(0.98); opacity: 0.97; }
+  }
+
+  .app-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 18px;
+    color: var(--linen);
+    letter-spacing: 0.05em;
+    line-height: 1.3;
+    margin-bottom: 4px;
+  }
+
+  .app-subtitle {
+    font-family: 'EB Garamond', serif;
+    font-style: italic;
+    font-size: 13px;
+    color: var(--linen-dim);
+  }
+
+  /* ── COSMIC CONTEXT CARD ── */
+  .cosmic-card {
+    margin: 0 16px 16px;
+    background: var(--panel);
+    border: 1px solid rgba(193,125,60,0.2);
+    border-radius: 12px;
+    padding: 16px 18px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .cosmic-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--amber), var(--gold), var(--amber), transparent);
+  }
+
+  .cosmic-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+  }
+
+  .cosmic-item {
+    text-align: center;
+  }
+
+  .cosmic-icon { font-size: 22px; display: block; margin-bottom: 4px; }
+
+  .cosmic-label {
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--amber);
+    display: block;
+    margin-bottom: 3px;
+  }
+
+  .cosmic-value {
+    font-size: 13px;
+    color: var(--linen);
+    line-height: 1.3;
+  }
+
+  .cosmic-sub {
+    font-size: 11px;
+    font-style: italic;
+    color: var(--linen-dim);
+    line-height: 1.3;
+  }
+
+  .cosmic-divider {
+    width: 1px;
+    background: rgba(193,125,60,0.2);
+    margin: 4px 0;
+  }
+
+  /* Sabbat banner */
+  .sabbat-banner {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(193,125,60,0.15);
+    text-align: center;
+  }
+
+  .sabbat-label {
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--herb-light);
+    display: block;
+    margin-bottom: 3px;
+  }
+
+  .sabbat-value {
+    font-size: 13px;
+    color: var(--linen);
+    font-style: italic;
+  }
+
+  /* ── INPUT SECTION ── */
+  .input-card {
+    margin: 0 16px 16px;
+    background: var(--panel);
+    border: 1px solid rgba(193,125,60,0.15);
+    border-radius: 12px;
+    padding: 18px;
+  }
+
+  .input-label {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--amber);
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .ingredient-input {
+    width: 100%;
+    background: var(--panel-light);
+    border: 1px solid rgba(193,125,60,0.25);
+    border-radius: 8px;
+    padding: 12px 14px;
+    color: var(--linen);
+    font-family: 'EB Garamond', serif;
+    font-size: 16px;
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+
+  .ingredient-input:focus {
+    border-color: var(--amber);
+  }
+
+  .ingredient-input::placeholder {
+    color: rgba(196,180,154,0.35);
+    font-style: italic;
+  }
+
+  .input-hint {
+    font-size: 12px;
+    font-style: italic;
+    color: var(--linen-dim);
+    margin-top: 8px;
+    opacity: 0.7;
+  }
+
+  /* Intention selector */
+  .intention-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .intention-btn {
+    background: var(--panel-light);
+    border: 1px solid rgba(193,125,60,0.2);
+    border-radius: 8px;
+    padding: 8px 10px;
+    color: var(--linen-dim);
+    font-family: 'EB Garamond', serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+
+  .intention-btn:hover, .intention-btn.selected {
+    background: rgba(193,125,60,0.15);
+    border-color: var(--amber);
+    color: var(--linen);
+  }
+
+  .intention-btn.selected {
+    box-shadow: inset 0 0 0 1px var(--amber);
+  }
+
+  /* Cast button */
+  .cast-btn {
+    width: 100%;
+    margin-top: 16px;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--ember), var(--amber));
+    border: none;
+    border-radius: 10px;
+    color: var(--linen);
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.25s;
+    box-shadow: 0 4px 20px rgba(193,125,60,0.3);
+  }
+
+  .cast-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 24px rgba(193,125,60,0.45);
+  }
+
+  .cast-btn:active { transform: translateY(0); }
+
+  .cast-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  /* ── RESULT ── */
+  .result-card {
+    margin: 0 16px 16px;
+    background: var(--panel);
+    border: 1px solid rgba(74,103,65,0.3);
+    border-radius: 12px;
+    padding: 20px 18px;
+    display: none;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .result-card.visible { display: block; }
+
+  .result-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--herb-light), var(--gold), var(--herb-light), transparent);
+  }
+
+  .result-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(74,103,65,0.2);
+  }
+
+  .result-flame { font-size: 24px; }
+
+  .result-title {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--herb-light);
+  }
+
+  /* Ingredient chips */
+  .chips-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 14px;
+  }
+
+  .chip {
+    background: rgba(74,103,65,0.2);
+    border: 1px solid rgba(74,103,65,0.4);
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.06em;
+    color: var(--herb-light);
+  }
+
+  /* Correspondence grid */
+  .corr-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .corr-item {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 8px;
+    align-items: start;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(193,125,60,0.1);
+  }
+
+  .corr-item:last-child { border-bottom: none; }
+
+  .corr-herb {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    color: var(--amber-light);
+    font-weight: 600;
+  }
+
+  .corr-meaning {
+    font-size: 13px;
+    color: var(--linen);
+    font-style: italic;
+    line-height: 1.4;
+  }
+
+  /* Spell output */
+  .spell-section {
+    background: rgba(193,125,60,0.06);
+    border: 1px solid rgba(193,125,60,0.15);
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 4px;
+  }
+
+  .spell-section-title {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+  }
+
+  .spell-text {
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--linen);
+  }
+
+  .spell-text p { margin-bottom: 10px; }
+  .spell-text p:last-child { margin-bottom: 0; }
+
+  .affirmation {
+    margin-top: 14px;
+    padding: 12px 14px;
+    background: rgba(74,103,65,0.12);
+    border-left: 3px solid var(--herb-light);
+    border-radius: 0 6px 6px 0;
+    font-style: italic;
+    font-size: 15px;
+    color: var(--linen);
+    line-height: 1.6;
+  }
+
+  /* Loading */
+  .loading {
+    text-align: center;
+    padding: 20px;
+    display: none;
+  }
+
+  .loading.visible { display: block; }
+
+  .cauldron {
+    font-size: 36px;
+    animation: bubble 1.5s ease-in-out infinite;
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  @keyframes bubble {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+
+  .loading-text {
+    font-family: 'EB Garamond', serif;
+    font-style: italic;
+    font-size: 15px;
+    color: var(--linen-dim);
+  }
+
+  /* Element badge */
+  .element-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  .element-fire { background: rgba(139,58,42,0.25); color: #E08060; border: 1px solid rgba(139,58,42,0.4); }
+  .element-water { background: rgba(42,80,139,0.25); color: #8090E0; border: 1px solid rgba(42,80,139,0.4); }
+  .element-earth { background: rgba(74,103,65,0.25); color: #8ABF7A; border: 1px solid rgba(74,103,65,0.4); }
+  .element-air { background: rgba(139,130,42,0.25); color: #D4C860; border: 1px solid rgba(139,130,42,0.4); }
+
+  /* Reset */
+  .reset-btn {
+    width: 100%;
+    padding: 10px;
+    background: transparent;
+    border: 1px solid rgba(193,125,60,0.2);
+    border-radius: 8px;
+    color: var(--linen-dim);
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: pointer;
+    margin-top: 12px;
+    transition: all 0.2s;
+  }
+
+  .reset-btn:hover {
+    border-color: var(--amber);
+    color: var(--linen);
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 20px;
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(196,180,154,0.3);
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="flame-container">
+      <span class="flame" id="mainFlame">🔥</span>
+    </div>
+    <div class="app-title">The Hearth Witch<br>Kitchen</div>
+    <div class="app-subtitle">Cook with intention. Stir with purpose.</div>
+  </div>
+
+  <!-- COSMIC CONTEXT -->
+  <div class="cosmic-card">
+    <div class="cosmic-row">
+      <div class="cosmic-item">
+        <span class="cosmic-icon" id="moonIcon">🌕</span>
+        <span class="cosmic-label">Moon</span>
+        <span class="cosmic-value" id="moonPhase">Loading…</span>
+        <span class="cosmic-sub" id="moonEnergy"></span>
+      </div>
+      <div class="cosmic-item">
+        <span class="cosmic-icon" id="dayIcon">☿</span>
+        <span class="cosmic-label">Today</span>
+        <span class="cosmic-value" id="dayName">Loading…</span>
+        <span class="cosmic-sub" id="dayEnergy"></span>
+      </div>
+      <div class="cosmic-item">
+        <span class="cosmic-icon">🌿</span>
+        <span class="cosmic-label">Season</span>
+        <span class="cosmic-value" id="seasonName">Loading…</span>
+        <span class="cosmic-sub" id="seasonEnergy"></span>
+      </div>
+    </div>
+    <div class="sabbat-banner">
+      <span class="sabbat-label">Next Sabbat</span>
+      <span class="sabbat-value" id="nextSabbat">Loading…</span>
+    </div>
+  </div>
+
+  <!-- INPUT -->
+  <div class="input-card">
+    <label class="input-label" for="ingredientInput">✦ What's in your kitchen?</label>
+    <input
+      type="text"
+      id="ingredientInput"
+      class="ingredient-input"
+      placeholder="rosemary, garlic, chilli, basil…"
+      autocomplete="off"
+      autocorrect="off"
+    >
+    <div class="input-hint">List your herbs, spices, and ingredients separated by commas</div>
+
+    <div style="margin-top: 16px">
+      <span class="input-label">✦ Your intention</span>
+      <div class="intention-row">
+        <button class="intention-btn selected" data-intention="abundance">🌾 Abundance</button>
+        <button class="intention-btn" data-intention="protection">🛡 Protection</button>
+        <button class="intention-btn" data-intention="love">🌹 Love & connection</button>
+        <button class="intention-btn" data-intention="clarity">🌙 Clarity & wisdom</button>
+        <button class="intention-btn" data-intention="healing">🌿 Healing</button>
+        <button class="intention-btn" data-intention="courage">🔥 Courage & strength</button>
+      </div>
+    </div>
+
+    <button class="cast-btn" id="castBtn" onclick="castSpell()">
+      ✦ Reveal the Magick ✦
+    </button>
+  </div>
+
+  <!-- LOADING -->
+  <div class="loading" id="loading">
+    <span class="cauldron">🫕</span>
+    <div class="loading-text">The cauldron stirs…<br>reading the ingredients…</div>
+  </div>
+
+  <!-- RESULT -->
+  <div class="result-card" id="result">
+    <div class="result-header">
+      <span class="result-flame">🌿</span>
+      <span class="result-title">Your Kitchen Spell</span>
+    </div>
+
+    <div id="elementBadge"></div>
+    <div class="chips-row" id="ingredientChips"></div>
+    <div class="corr-grid" id="correspondences"></div>
+
+    <div class="spell-section">
+      <div class="spell-section-title">✦ Your Working</div>
+      <div class="spell-text" id="spellWorking"></div>
+    </div>
+
+    <div class="affirmation" id="affirmation"></div>
+
+    <button class="reset-btn" onclick="resetApp()">↺ Cast Again</button>
+  </div>
+
+  <div class="footer">Lennox Bramble · Witch in the City · 🌿</div>
+</div>
+
+<script>
+// ── CORRESPONDENCE DATABASE ──
+const herbs = {
+  // Common cooking herbs
+  rosemary: { magic: 'Protection, memory, purification, mental clarity', element: 'fire' },
+  thyme: { magic: 'Courage, strength, healing, purification', element: 'air' },
+  basil: { magic: 'Abundance, love, prosperity, exorcism', element: 'fire' },
+  mint: { magic: 'Prosperity, travel, healing, mental clarity', element: 'air' },
+  sage: { magic: 'Wisdom, purification, longevity, protection', element: 'air' },
+  lavender: { magic: 'Calm, sleep, love, psychic awareness', element: 'air' },
+  oregano: { magic: 'Joy, strength, vitality, love', element: 'air' },
+  parsley: { magic: 'Purification, protection, lust, fertility', element: 'air' },
+  chive: { magic: 'Protection, banishing, warding, courage', element: 'fire' },
+  chives: { magic: 'Protection, banishing, warding, courage', element: 'fire' },
+  dill: { magic: 'Protection, money, luck, lust', element: 'fire' },
+  fennel: { magic: 'Protection, healing, purification', element: 'fire' },
+  tarragon: { magic: 'Confidence, dragon energy, strength', element: 'fire' },
+  bay: { magic: 'Wishes, success, psychic power, protection', element: 'fire' },
+  'bay leaf': { magic: 'Wishes, success, psychic power, protection', element: 'fire' },
+  'bay leaves': { magic: 'Wishes, success, psychic power, protection', element: 'fire' },
+  // Spices
+  cinnamon: { magic: 'Abundance, love, success, speed', element: 'fire' },
+  ginger: { magic: 'Power, success, money, love', element: 'fire' },
+  turmeric: { magic: 'Purification, prosperity, protection', element: 'fire' },
+  chilli: { magic: 'Courage, passion, breaking hexes, energy', element: 'fire' },
+  'chilli pepper': { magic: 'Courage, passion, breaking hexes, energy', element: 'fire' },
+  pepper: { magic: 'Protection, banishing, breaking obstacles', element: 'fire' },
+  cardamom: { magic: 'Love, lust, clarity, energy', element: 'water' },
+  cloves: { magic: 'Protection, love, money, exorcism', element: 'fire' },
+  nutmeg: { magic: 'Luck, money, fidelity, health', element: 'fire' },
+  vanilla: { magic: 'Love, sensuality, mental clarity', element: 'water' },
+  saffron: { magic: 'Love, healing, happiness, wind', element: 'fire' },
+  // Vegetables / alliums
+  garlic: { magic: 'Protection, healing, courage, banishing', element: 'fire' },
+  onion: { magic: 'Protection, purification, banishing', element: 'fire' },
+  leek: { magic: 'Love, protection, exorcism', element: 'fire' },
+  // Fruits
+  lemon: { magic: 'Purification, love, friendship, clarity', element: 'water' },
+  orange: { magic: 'Love, luck, money, solar energy', element: 'fire' },
+  apple: { magic: 'Love, healing, immortality, wisdom', element: 'water' },
+  strawberry: { magic: 'Love, luck, success, Aphrodite', element: 'water' },
+  pomegranate: { magic: 'Death, rebirth, prosperity, Persephone', element: 'water' },
+  // Others
+  honey: { magic: 'Love, binding, sweetening, happiness', element: 'earth' },
+  salt: { magic: 'Purification, protection, grounding, banishing', element: 'earth' },
+  olive: { magic: 'Peace, success, wisdom, Athena', element: 'earth' },
+  'olive oil': { magic: 'Peace, success, wisdom, Athena', element: 'earth' },
+  rose: { magic: 'Love, beauty, psychic power, Aphrodite', element: 'water' },
+  chamomile: { magic: 'Calm, sleep, money, luck', element: 'water' },
+  mugwort: { magic: 'Dreams, divination, astral travel, protection', element: 'earth' },
+  nettle: { magic: 'Protection, healing, lust, removing hexes', element: 'fire' },
+  elderflower: { magic: 'Protection, healing, prosperity, faerie magick', element: 'water' },
+  rice: { magic: 'Fertility, protection, rain, money', element: 'earth' },
+  oat: { magic: 'Money, prosperity, grounding, harvest', element: 'earth' },
+  oats: { magic: 'Money, prosperity, grounding, harvest', element: 'earth' },
+  flour: { magic: 'Earth energy, grounding, sustenance', element: 'earth' },
+  egg: { magic: 'Fertility, new beginnings, potential, wholeness', element: 'earth' },
+  eggs: { magic: 'Fertility, new beginnings, potential, wholeness', element: 'earth' },
+  milk: { magic: 'Nurturing, the goddess, moon energy, nourishment', element: 'water' },
+  butter: { magic: 'Comfort, abundance, the hearth, luxury', element: 'earth' },
+};
+
+const elementEmoji = { fire: '🔥', water: '💧', earth: '🌿', air: '🌬' };
+const elementNames = { fire: 'Fire', water: 'Water', earth: 'Earth', air: 'Air' };
+
+// ── MOON PHASE ──
+function getMoonPhase(date) {
+  const known = new Date(2000, 0, 6, 18, 14); // Known new moon
+  const diff = date - known;
+  const days = diff / 86400000;
+  const cycle = 29.53058867;
+  const phase = ((days % cycle) + cycle) % cycle;
+
+  if (phase < 1.85) return { name: 'New Moon', icon: '🌑', energy: 'Beginnings, seeds, intention' };
+  if (phase < 7.38) return { name: 'Waxing Crescent', icon: '🌒', energy: 'Growth, attraction, building' };
+  if (phase < 9.22) return { name: 'First Quarter', icon: '🌓', energy: 'Action, decision, momentum' };
+  if (phase < 14.77) return { name: 'Waxing Gibbous', icon: '🌔', energy: 'Refinement, persistence' };
+  if (phase < 16.61) return { name: 'Full Moon', icon: '🌕', energy: 'Manifestation, power, release' };
+  if (phase < 22.15) return { name: 'Waning Gibbous', icon: '🌖', energy: 'Gratitude, sharing, wisdom' };
+  if (phase < 23.99) return { name: 'Last Quarter', icon: '🌗', energy: 'Release, reflection, letting go' };
+  return { name: 'Waning Crescent', icon: '🌘', energy: 'Rest, surrender, completion' };
+}
+
+// ── PLANETARY DAYS ──
+const days = [
+  { name: 'Sunday', planet: 'Sun', icon: '☀', energy: 'Vitality, success, solar power' },
+  { name: 'Monday', planet: 'Moon', icon: '🌙', energy: 'Intuition, dreams, emotion' },
+  { name: 'Tuesday', planet: 'Mars', icon: '♂', energy: 'Courage, action, strength' },
+  { name: 'Wednesday', planet: 'Mercury', icon: '☿', energy: 'Communication, wit, travel' },
+  { name: 'Thursday', planet: 'Jupiter', icon: '♃', energy: 'Abundance, expansion, luck' },
+  { name: 'Friday', planet: 'Venus', icon: '♀', energy: 'Love, beauty, connection' },
+  { name: 'Saturday', planet: 'Saturn', icon: '♄', energy: 'Discipline, banishing, endings' },
+];
+
+// ── SABBATS ──
+function getNextSabbat(date) {
+  const year = date.getFullYear();
+  const sabbats = [
+    { name: 'Imbolc', date: new Date(year, 1, 1), emoji: '🕯' },
+    { name: 'Ostara', date: new Date(year, 2, 21), emoji: '🌱' },
+    { name: 'Beltane', date: new Date(year, 4, 1), emoji: '🔥' },
+    { name: 'Litha', date: new Date(year, 5, 21), emoji: '☀' },
+    { name: 'Lughnasadh', date: new Date(year, 7, 1), emoji: '🌾' },
+    { name: 'Mabon', date: new Date(year, 8, 21), emoji: '🍂' },
+    { name: 'Samhain', date: new Date(year, 9, 31), emoji: '🕸' },
+    { name: 'Yule', date: new Date(year, 11, 21), emoji: '❄' },
+    { name: 'Imbolc', date: new Date(year + 1, 1, 1), emoji: '🕯' },
+  ];
+
+  for (const s of sabbats) {
+    if (s.date > date) {
+      const daysUntil = Math.ceil((s.date - date) / 86400000);
+      return `${s.emoji} ${s.name} — ${daysUntil} day${daysUntil === 1 ? '' : 's'} away`;
+    }
+  }
+  return 'Yule approaches ❄';
+}
+
+// ── SEASON ──
+function getSeason(date) {
+  const m = date.getMonth();
+  if (m >= 2 && m <= 4) return { name: 'Spring', energy: 'Growth, renewal, air' };
+  if (m >= 5 && m <= 7) return { name: 'Summer', energy: 'Fire, abundance, power' };
+  if (m >= 8 && m <= 10) return { name: 'Autumn', energy: 'Harvest, release, earth' };
+  return { name: 'Winter', energy: 'Rest, reflection, water' };
+}
+
+// ── INIT COSMIC DATA ──
+function initCosmic() {
+  const now = new Date();
+  const moon = getMoonPhase(now);
+  const day = days[now.getDay()];
+  const season = getSeason(now);
+
+  document.getElementById('moonIcon').textContent = moon.icon;
+  document.getElementById('moonPhase').textContent = moon.name;
+  document.getElementById('moonEnergy').textContent = moon.energy;
+
+  document.getElementById('dayIcon').textContent = day.icon;
+  document.getElementById('dayName').textContent = `${day.name} · ${day.planet}`;
+  document.getElementById('dayEnergy').textContent = day.energy;
+
+  document.getElementById('seasonName').textContent = season.name;
+  document.getElementById('seasonEnergy').textContent = season.energy;
+
+  document.getElementById('nextSabbat').textContent = getNextSabbat(now);
+}
+
+// ── INTENTION BUTTONS ──
+let selectedIntention = 'abundance';
+
+document.querySelectorAll('.intention-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.intention-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedIntention = btn.dataset.intention;
+  });
+});
+
+// ── PARSE INGREDIENTS ──
+function parseIngredients(input) {
+  return input.split(',')
+    .map(i => i.trim().toLowerCase())
+    .filter(i => i.length > 0);
+}
+
+function lookupIngredient(name) {
+  if (herbs[name]) return herbs[name];
+  // Try partial match
+  for (const key of Object.keys(herbs)) {
+    if (name.includes(key) || key.includes(name)) return herbs[key];
+  }
+  return null;
+}
+
+function getDominantElement(found) {
+  const counts = { fire: 0, water: 0, earth: 0, air: 0 };
+  found.forEach(f => { if (f.data) counts[f.data.element]++; });
+  return Object.entries(counts).sort((a, b) => b[1] - a[1])[0][0];
+}
+
+// ── CALL CLAUDE API ──
+async function generateSpell(ingredients, found, intention, moonPhase, dayName, dayPlanet, season) {
+  const knownCorrs = found
+    .filter(f => f.data)
+    .map(f => `${f.name}: ${f.data.magic}`)
+    .join('; ');
+
+  const prompt = `You are a hearth witch writing a personalised kitchen spell for someone cooking with these ingredients: ${ingredients.join(', ')}.
+
+Their magical intention is: ${intention}.
+Today is ${dayName}, ruled by ${dayPlanet}.
+The moon is in its ${moonPhase} phase.
+The season is ${season}.
+Known magical correspondences: ${knownCorrs}.
+
+Write a warm, poetic, practical kitchen spell in Lennox Bramble's voice — a Glasgow hearth witch who is grounded, slightly witty, genuinely knowledgeable, and not pretentious. Use "magick" not "magic".
+
+Format your response as JSON with these exact keys:
+{
+  "working": "2-3 short paragraphs describing how to cook with intention — what to do with the ingredients, how to stir, what to focus on, any timing or ritual element. Practical and poetic.",
+  "affirmation": "A single powerful affirmation or incantation to speak while cooking. 1-3 sentences. Should feel like something you'd actually say in a kitchen, not on a stage.",
+  "elementNote": "One sentence about the dominant element energy in this dish."
+}
+
+Return only valid JSON, no other text.`;
+
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-6',
+      max_tokens: 1000,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+
+  const data = await response.json();
+  const text = data.content.filter(b => b.type === 'text').map(b => b.text).join('');
+  const clean = text.replace(/```json|```/g, '').trim();
+  return JSON.parse(clean);
+}
+
+// ── CAST SPELL ──
+async function castSpell() {
+  const input = document.getElementById('ingredientInput').value.trim();
+  if (!input) {
+    document.getElementById('ingredientInput').focus();
+    return;
+  }
+
+  const ingredients = parseIngredients(input);
+  const found = ingredients.map(name => ({ name, data: lookupIngredient(name) }));
+
+  // Show loading
+  document.getElementById('castBtn').disabled = true;
+  document.getElementById('loading').classList.add('visible');
+  document.getElementById('result').classList.remove('visible');
+
+  try {
+    const now = new Date();
+    const moon = getMoonPhase(now);
+    const day = days[now.getDay()];
+    const season = getSeason(now);
+
+    const spell = await generateSpell(
+      ingredients, found, selectedIntention,
+      moon.name, day.name, day.planet, season.name
+    );
+
+    // Render chips
+    document.getElementById('ingredientChips').innerHTML =
+      found.map(f => `<span class="chip">${f.name}</span>`).join('');
+
+    // Dominant element
+    const dominant = getDominantElement(found);
+    document.getElementById('elementBadge').innerHTML =
+      `<span class="element-badge element-${dominant}">${elementEmoji[dominant]} ${elementNames[dominant]} energy dominant</span>`;
+
+    // Update flame
+    const flameEmojis = { fire: '🔥', water: '💧', earth: '🌿', air: '💨' };
+    document.getElementById('mainFlame').textContent = flameEmojis[dominant];
+
+    // Correspondences
+    const knownFound = found.filter(f => f.data);
+    if (knownFound.length > 0) {
+      document.getElementById('correspondences').innerHTML =
+        knownFound.map(f => `
+          <div class="corr-item">
+            <span class="corr-herb">${f.name}</span>
+            <span class="corr-meaning">${f.data.magic}</span>
+          </div>
+        `).join('');
+    } else {
+      document.getElementById('correspondences').innerHTML = '';
+    }
+
+    // Spell text
+    document.getElementById('spellWorking').innerHTML =
+      spell.working.split('\n\n').map(p => `<p>${p}</p>`).join('');
+
+    document.getElementById('affirmation').textContent = `"${spell.affirmation}"`;
+
+    // Show result
+    document.getElementById('loading').classList.remove('visible');
+    document.getElementById('result').classList.add('visible');
+    document.getElementById('result').scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+  } catch (err) {
+    document.getElementById('loading').classList.remove('visible');
+    document.getElementById('result').classList.add('visible');
+    document.getElementById('spellWorking').innerHTML =
+      `<p>The cauldron ran into trouble — please try again.</p>`;
+    document.getElementById('affirmation').textContent = '';
+    document.getElementById('correspondences').innerHTML = '';
+    document.getElementById('ingredientChips').innerHTML = '';
+    document.getElementById('elementBadge').innerHTML = '';
+    console.error(err);
+  }
+
+  document.getElementById('castBtn').disabled = false;
+}
+
+// ── RESET ──
+function resetApp() {
+  document.getElementById('result').classList.remove('visible');
+  document.getElementById('ingredientInput').value = '';
+  document.getElementById('mainFlame').textContent = '🔥';
+  document.getElementById('ingredientInput').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ── ENTER KEY ──
+document.getElementById('ingredientInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') castSpell();
+});
+
+// ── INIT ──
+initCosmic();
+</script>
+
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+</script>
+
+  <div id="installBanner" style="display:none;position:fixed;bottom:0;left:0;right:0;background:linear-gradient(135deg,#252018,#332F28);border-top:1px solid rgba(193,125,60,0.3);padding:14px 16px;z-index:999;font-family:'EB Garamond',serif;font-size:14px;color:#F0E6D3;text-align:center;">
+    <span style="font-family:'Cinzel',serif;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:#C17D3C;display:block;margin-bottom:4px">Add to Home Screen</span>
+    Tap <strong>Share</strong> then <strong>Add to Home Screen</strong> to install ✦
+    <button onclick="document.getElementById('installBanner').style.display='none'" style="display:block;margin:8px auto 0;background:transparent;border:1px solid rgba(193,125,60,0.3);color:#C4B49A;font-family:'Cinzel',serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:4px 12px;border-radius:4px;cursor:pointer">Dismiss</button>
+  </div>
+<script>
+// Show iOS install hint if not already installed
+const isIOS = /iphone|ipad|ipod/.test(navigator.userAgent.toLowerCase());
+const isStandalone = window.navigator.standalone;
+const dismissed = sessionStorage.getItem('installDismissed');
+if (isIOS && !isStandalone && !dismissed) {
+  setTimeout(() => {
+    document.getElementById('installBanner').style.display = 'block';
+  }, 4000);
+}
+document.querySelector('#installBanner button')?.addEventListener('click', () => {
+  sessionStorage.setItem('installDismissed', '1');
+});
+</script>
+</body>
+</html>
